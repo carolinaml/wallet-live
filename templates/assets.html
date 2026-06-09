@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --page-bg: #010a27;
+            --panel-bg: rgba(255, 255, 255, 0.04);
+            --card-bg: rgba(11, 18, 44, 0.78);
+            --line-soft: rgba(255, 255, 255, 0.09);
+            --line-strong: rgba(255, 255, 255, 0.14);
+            --text-main: #e8f0ff;
+            --text-dim: #8da0c7;
+            --text-faint: #5b6d94;
+            --accent: #2dc6ff;
+            --accent-strong: #0db8f0;
+            --green: #38d39f;
+            --red: #ff6b85;
+        }
+
+        html,
+        body {
+            height: 100%;
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Space Mono', monospace;
+            color: var(--text-main);
+            background: radial-gradient(circle at 8% 2%, rgba(45, 198, 255, 0.08), transparent 28%),
+                        radial-gradient(circle at 94% 94%, rgba(13, 184, 240, 0.08), transparent 35%),
+                        var(--page-bg);
+        }
+
+        .assets-shell {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 1rem;
+        }
+
+        .assets-header h1 {
+            font-size: 1.55rem;
+            letter-spacing: 0.12em;
+            font-weight: 700;
+            text-transform: lowercase;
+            margin: 0;
+        }
+
+        .welcome-pill {
+            border: 1px solid var(--line-soft);
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-dim);
+            border-radius: 999px;
+            padding: 0.5rem 0.9rem;
+            font-size: 0.74rem;
+        }
+
+        .assets-panel {
+            border: 1px solid var(--line-soft);
+            border-radius: 1.25rem;
+            background: var(--panel-bg);
+            backdrop-filter: blur(8px);
+            overflow: hidden;
+        }
+
+        .grid-header,
+        .asset-summary,
+        .history-head,
+        .history-row {
+            display: grid;
+            grid-template-columns: 1.2fr 0.7fr 0.8fr 0.6fr;
+            gap: 0.85rem;
+            align-items: center;
+        }
+
+        .grid-header {
+            border-bottom: 1px solid var(--line-soft);
+            padding: 0.9rem 1.1rem;
+            color: var(--text-faint);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            font-size: 0.67rem;
+        }
+
+        .asset-item {
+            margin: 0.8rem;
+            border-radius: 0.95rem;
+            border: 1px solid var(--line-soft);
+            background: var(--card-bg);
+            overflow: hidden;
+            transition: border-color 170ms ease, background 170ms ease;
+        }
+
+        .asset-item[open] {
+            border-color: rgba(45, 198, 255, 0.32);
+            background: rgba(14, 23, 57, 0.9);
+        }
+
+        details > summary {
+            list-style: none;
+        }
+
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .asset-summary {
+            cursor: pointer;
+            padding: 0.95rem 1.05rem;
+        }
+
+        .asset-name {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+
+        .asset-meta {
+            margin-top: 0.2rem;
+            color: var(--text-faint);
+            text-transform: uppercase;
+            letter-spacing: 0.11em;
+            font-size: 0.62rem;
+        }
+
+        .numeric {
+            text-align: right;
+            color: #d6e3ff;
+        }
+
+        .delta-positive {
+            color: var(--green);
+            font-weight: 700;
+        }
+
+        .delta-negative {
+            color: var(--red);
+            font-weight: 700;
+        }
+
+        .history-box {
+            border-top: 1px solid var(--line-soft);
+            padding: 0.45rem 1.05rem 0.9rem;
+        }
+
+        .history-inner {
+            border: 1px solid var(--line-soft);
+            border-radius: 0.85rem;
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.75rem;
+        }
+
+        .history-head {
+            color: var(--text-faint);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-size: 0.62rem;
+            padding: 0.25rem 0.25rem 0.55rem;
+        }
+
+        .history-row {
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 0.7rem;
+            background: rgba(1, 9, 34, 0.74);
+            padding: 0.65rem 0.75rem;
+            color: #d6e3ff;
+            margin-top: 0.45rem;
+            font-size: 0.86rem;
+        }
+
+        .history-date {
+            color: #95a9d3;
+        }
+
+        .empty-state {
+            margin: 0.8rem;
+            border: 1px dashed var(--line-strong);
+            border-radius: 0.95rem;
+            padding: 1.15rem;
+            color: var(--text-faint);
+            text-align: center;
+            font-size: 0.86rem;
+            text-transform: lowercase;
+        }
+
+        .actions-row {
+            margin-top: 1.1rem;
+            display: flex;
+            gap: 0.7rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-register {
+            border: 1px solid rgba(45, 198, 255, 0.38);
+            background: rgba(45, 198, 255, 0.18);
+            color: #99ecff;
+            border-radius: 0.72rem;
+            padding: 0.58rem 1.05rem;
+            text-transform: lowercase;
+            font-size: 0.9rem;
+        }
+
+        .btn-register:hover {
+            background: rgba(45, 198, 255, 0.28);
+            color: #c4f6ff;
+        }
+
+        .btn-logout {
+            border-radius: 0.72rem;
+            padding: 0.58rem 1.05rem;
+            border: 1px solid var(--line-soft);
+            background: rgba(255, 255, 255, 0.06);
+            color: #b6c7ea;
+            text-decoration: none;
+            text-transform: lowercase;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout:hover {
+            color: #d2def8;
+            background: rgba(255, 255, 255, 0.11);
+        }
+
+        details > summary {
+            list-style: none;
+        }
+
+        details > summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .purchase-modal {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 220ms ease;
+        }
+
+        .purchase-modal.is-open {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+        }
+
+        .purchase-card {
+            transform: translateY(18px) scale(0.98);
+            transition: transform 220ms ease;
+        }
+
+        .purchase-modal.is-open .purchase-card {
+            transform: translateY(0) scale(1);
+        }
+
+        .purchase-modal {
+            position: fixed;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(1, 10, 39, 0.76);
+            backdrop-filter: blur(4px);
+            padding: 1rem;
+            z-index: 1055;
+        }
+
+        .purchase-card {
+            width: 100%;
+            max-width: 440px;
+            border-radius: 1rem;
+            border: 1px solid rgba(45, 198, 255, 0.26);
+            background: rgba(12, 22, 52, 0.92);
+            box-shadow: 0 10px 34px rgba(0, 0, 0, 0.45);
+            padding: 1.25rem;
+        }
+
+        .purchase-title {
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #eaf3ff;
+            text-transform: lowercase;
+        }
+
+        .form-label-small {
+            color: #99abd1;
+            text-transform: lowercase;
+            font-size: 0.8rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .form-control-dark,
+        .form-select-dark {
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(3, 11, 31, 0.78);
+            color: #ecf2ff;
+        }
+
+        .form-control-dark:focus,
+        .form-select-dark:focus {
+            border-color: rgba(45, 198, 255, 0.55);
+            box-shadow: 0 0 0 0.2rem rgba(45, 198, 255, 0.2);
+            background: rgba(3, 11, 31, 0.92);
+            color: #ecf2ff;
+        }
+
+        @media (max-width: 767px) {
+            .assets-shell {
+                padding-top: 1.6rem;
+            }
+
+            .assets-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.6rem;
+            }
+
+            .grid-header,
+            .asset-summary,
+            .history-head,
+            .history-row {
+                grid-template-columns: 1fr;
+                gap: 0.38rem;
+            }
+
+            .numeric {
+                text-align: left;
+            }
+
+            .grid-header {
+                font-size: 0.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="assets-shell">
+        <header class="assets-header d-flex align-items-center justify-content-between gap-3 mb-4">
+            <h1>assets</h1>
+            <div class="welcome-pill">welcome, {{ user.username }}</div>
+        </header>
+
+        <section class="assets-panel">
+            <div class="grid-header">
+                <div>name</div>
+                <div class="text-end">quantity</div>
+                <div class="text-end">unit value</div>
+                <div class="text-end">change</div>
+            </div>
+
+            {% for asset in owned_assets %}
+            <details class="asset-item">
+                <summary class="asset-summary">
+                    <div class="asset-name-wrap">
+                        <div class="asset-name">{{ asset.name }}</div>
+                        <div class="asset-meta">asset id {{ asset.id }}</div>
+                    </div>
+                    <div class="numeric">{{ asset.quantity_owned }}</div>
+                    <div class="numeric">$ {{ asset.unit_value }}</div>
+                    <div class="numeric {% if asset.value_delta >= 0.0 %}delta-positive{% else %}delta-negative{% endif %}">
+                        {% if asset.value_delta >= 0.0 %}+{% endif %}{{ asset.value_delta }}
+                    </div>
+                </summary>
+
+                <div class="history-box">
+                    <div class="history-inner">
+                        <div class="history-head">
+                            <div>purchase date</div>
+                            <div class="text-md-end">quantity</div>
+                            <div class="text-md-end">bought for</div>
+                            <div class="text-md-end">change</div>
+                        </div>
+
+                        {% for history in asset.purchase_history.0 %}
+                        <div class="history-row">
+                            <div class="history-date">{{ history.bought_at | human_datetime }}</div>
+                            <div class="numeric">{{ history.quantity_bought }}</div>
+                            <div class="numeric">$ {{ history.bought_for }}</div>
+                            <div class="numeric {% if history.value_delta >= 0.0 %}delta-positive{% else %}delta-negative{% endif %}">
+                                {% if history.value_delta >= 0.0 %}+{% endif %}{{ history.value_delta }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </details>
+            {% else %}
+            <div class="empty-state">no assets found</div>
+            {% endfor %}
+        </section>
+
+        <div class="actions-row">
+            <button id="open-purchase" type="button" class="btn btn-register">register purchase</button>
+            <a href="/logout" class="btn btn-logout">logout</a>
+        </div>
+    </main>
+
+    <div id="purchase-modal" class="purchase-modal">
+        <div class="purchase-card">
+            <p class="purchase-title">register purchase</p>
+
+            <form method="POST" action="/assets" class="mt-4">
+                <div class="mb-3">
+                    <label for="asset_id" class="form-label form-label-small">asset</label>
+                    <select id="asset_id" name="asset_id" required class="form-select form-select-dark">
+                        <option value="" selected disabled>Select</option>
+                        {% for asset in available_assets %}
+                        <option value="{{ asset.id }}" data-unit-value="{{ asset.unit_value }}">{{ asset.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="unit_value" class="form-label form-label-small">unit value</label>
+                    <input id="unit_value" name="unit_value" type="number" step="any" required class="form-control form-control-dark">
+                </div>
+
+                <div class="mb-3">
+                    <label for="quantity" class="form-label form-label-small">quantity</label>
+                    <input id="quantity" name="quantity" type="number" step="any" min="0.0000001" required class="form-control form-control-dark">
+                </div>
+
+                <div class="d-flex gap-2 pt-2">
+                    <button id="cancel-purchase" type="button" class="btn btn-logout flex-fill">cancel</button>
+                    <button type="submit" class="btn btn-register flex-fill">submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const modal = document.getElementById('purchase-modal');
+            const openButton = document.getElementById('open-purchase');
+            const cancelButton = document.getElementById('cancel-purchase');
+            const assetSelect = document.getElementById('asset_id');
+            const unitValueInput = document.getElementById('unit_value');
+
+            if (!modal || !openButton || !cancelButton || !assetSelect || !unitValueInput) {
+                return;
+            }
+
+            const openModal = () => modal.classList.add('is-open');
+            const closeModal = () => modal.classList.remove('is-open');
+
+            const syncUnitValue = () => {
+                const selected = assetSelect.options[assetSelect.selectedIndex];
+                if (selected && selected.dataset.unitValue) {
+                    unitValueInput.value = selected.dataset.unitValue;
+                } else {
+                    unitValueInput.value = '';
+                }
+            };
+
+            openButton.addEventListener('click', () => {
+                syncUnitValue();
+                openModal();
+            });
+
+            cancelButton.addEventListener('click', closeModal);
+            modal.addEventListener('click', (event) => {
+                if (event.target === modal) {
+                    closeModal();
+                }
+            });
+
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape') {
+                    closeModal();
+                }
+            });
+
+            assetSelect.addEventListener('change', syncUnitValue);
+            syncUnitValue();
+        })();
+    </script>
+</body>
+</html>

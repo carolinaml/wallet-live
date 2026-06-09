@@ -7,11 +7,13 @@ use axum::{
 };
 use axum_extra::extract::{CookieJar, cookie::Cookie};
 use serde::Deserialize;
+use tokio::try_join;
 
 use crate::{
     app::AppState, 
     auth::user::{UnauthenticatedUser, User}, 
     error::AppError, 
+    models::{Asset, OwnedAsset},
     repository::Repository
 };
 
@@ -19,6 +21,8 @@ pub fn router() -> Router<AppState> {
     Router::new()
         .route("/", get(index))
         .route("/login", get(login_page).post(login))
+        .route("/logout", get(logout))
+        .route("/assets", get(assets).post(purchase_assets))
 }
 
 #[derive(Template)]
@@ -54,10 +58,83 @@ async fn login(
 
     Ok((jar.add(cookie), Redirect::to("/")))
 }
+pub async fn logout(jar: CookieJar) -> impl IntoResponse {
+    (jar.remove("token"), Redirect::to("/login"))
+}
 
-async fn index(maybe_user: Option<User>) -> Result<Response, AppError> {
+
+async fn index(maybe_user: Option<User>) -> Result<Redirect, AppError> {
     match maybe_user {
-        Some(user) => Ok(Html(format!("Hello, {}!", user.username())).into_response()),
-        None => Ok(Redirect::to("/login").into_response()),
+        Some(_) => Ok(Redirect::to("/assets")),
+        None => Ok(Redirect::to("/login")),
+    }
+}
+
+#[derive(Template)]
+#[template(path = "assets.html")]
+pub struct AssetsPage {
+    available_assets: Vec<Asset>,
+    owned_assets: Vec<OwnedAsset>,
+    user : User,
+}
+
+pub async fn assets(
+    repository: Repository,
+    user: User,
+) -> Result<Html<String>, AppError> {
+    let (owned_assets, available_assets) = try_join!(
+        repository.list_owned_assets(user.id()),
+        repository.list_assets()
+    )?;
+
+    let html = AssetsPage {
+        available_assets,
+        owned_assets,
+        user,
+    }
+    .render()?;
+
+    Ok(Html(html))
+}
+
+#[derive(Deserialize)]
+pub struct PurchaseForm {
+    asset_id: i64,
+    unit_value: f64,
+    quantity: f64,
+}
+
+pub async fn purchase_assets(
+    repository: Repository,
+    user: User,
+    Form(request): Form<PurchaseForm>,
+) -> Result<Redirect, AppError> {
+    repository.insert_owned_asset(
+        user.id(),
+        request.asset_id,
+        request.quantity,
+        request.unit_value,
+    ).await?;
+
+    Ok(Redirect::to("/assets"))
+}
+
+pub mod filters {
+    use time::{
+        format_description::StaticFormatDescription,
+        macros::format_description
+    };
+
+    #[askama::filter_fn]
+    pub fn human_datetime(
+        datetime: &time::OffsetDateTime,
+        _env: &dyn askama::Values
+    ) -> askama::Result<String> {
+        const HUMAN_READABLE_FORMAT: StaticFormatDescription = 
+            format_description!(version = 2, "[year]-[month]-[day] [hour]:[minute]");
+
+        datetime
+            .format(HUMAN_READABLE_FORMAT)
+            .map_err(askama::Error::custom)
     }
 }
