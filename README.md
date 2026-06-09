@@ -81,7 +81,7 @@ There is also a seed migration with initial assets such as Bitcoin and Ethereum.
 docker compose up -d
 ```
 
-The `compose.yml` file exposes PostgreSQL on `localhost:5432` with the credentials.
+The `compose.yml` file exposes PostgreSQL on `localhost:5432` with the credentials (use the env vars).
 
 ### Environment variable
 
